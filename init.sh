@@ -9,7 +9,7 @@ pip install -q -e .
 pip install gdown
 espnet/utils/download_from_google_drive.sh \
     "https://drive.google.com/open?id=13Y4tSygc8WtqzvAVGK_vRV9GlV7TRC0w" espnet/tools tar.gz > /dev/null
-cd espnet/tools && bash installers/install_sph2pipe.sh
+espnet/tools/installers/install_sph2pipe.sh
 
 # make dummy activate
 touch espnet/tools/activate_python.sh

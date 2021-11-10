@@ -17,4 +17,5 @@ touch tools/activate_python.sh
 
 # Move dataset
 mv /input/dump /home/vessl/espnet/egs/an4/tts1/dump
-mv /input/downloads /home/vessl/espnet/egs/an4/tts1/downloads
+mv /input/data /home/vessl/espnet/egs/an4/tts1/data
+mv /input/fbank /home/vessl/espnet/egs/an4/tts1/fbank

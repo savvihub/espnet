@@ -257,6 +257,26 @@ class SubReporter:
         d["iteration"] = self.total_count
         wandb.log(d)
 
+    def vessl_log(self, start: int = None):
+        import vessl
+
+        if start is None:
+            start = 0
+        if start < 0:
+            start = self.count + start
+
+        payload = {}
+        for key2, stats_list in self.stats.items():
+            assert len(stats_list) == self.count, (len(stats_list), self.count)
+            values = stats_list[start:]
+            v = aggregate(values)
+            payload[wandb_get_prefix(key2) + key2] = v
+
+        vessl.log(
+            step=self.total_count,
+            payload=d
+        )
+
     def finished(self) -> None:
         self._finished = True
 

@@ -322,6 +322,9 @@ def train(args):
     device = torch.device("cuda" if args.ngpu > 0 else "cpu")
     model = model.to(device)
 
+    print(f"device:{device}")
+    print(f"model:{model}")
+
     # freeze modules, if specified
     if args.freeze_mods:
         if hasattr(model, "module"):
@@ -544,6 +547,7 @@ def train(args):
     report_keys = ["epoch", "iteration", "elapsed_time"] + plot_keys
     trainer.extend(extensions.PrintReport(report_keys), trigger=report_interval)
     trainer.extend(extensions.ProgressBar(), trigger=report_interval)
+    trainer.extend(extensions. , trigger=report_interval)  # vessl log
 
     set_early_stop(trainer, args)
     if args.tensorboard_dir is not None and args.tensorboard_dir != "":

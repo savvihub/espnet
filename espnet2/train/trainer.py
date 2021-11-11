@@ -332,6 +332,7 @@ class Trainer:
                     reporter.tensorboard_add_scalar(summary_writer)
                 if trainer_options.use_wandb:
                     reporter.wandb_log()
+                reporter.vessl_log()
 
                 # 4. Save/Update the checkpoint
                 torch.save(

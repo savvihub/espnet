@@ -267,9 +267,6 @@ def log_report_to_vessl():
         payload['epoch'] = updatar.epoch
         payload['iteration'] = updatar.iteration
         payload['elapsed_time'] = trainer.elapsed_time
-
-        print('payload:', payload)
-
         payload = {k.replace("/", "-"): v for k, v in payload.items()}
         vessl.log(
             step=int(updatar.epoch),
@@ -671,13 +668,6 @@ def decode(args):
             # NOTE: exist_ok = True is needed for parallel process decoding
             os.makedirs(os.path.dirname(figname), exist_ok=True)
         plt.savefig(figname)
-
-        import vessl
-
-        vessl.log({
-            "Attention": [vessl.Image(plt, caption=figname)]
-        })
-
         plt.close()
 
     # define function to calculate focus rate

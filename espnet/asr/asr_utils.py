@@ -320,6 +320,10 @@ else:
             plt.savefig(filename)
             plt.close()
 
+            import vessl
+            vessl.log(
+                {"Attention": [vessl.Image(data=filename, caption=filename)]}
+            )
 
 try:
     from chainer.training import extension

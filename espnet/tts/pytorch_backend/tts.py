@@ -256,16 +256,12 @@ class CustomConverter(object):
 
         return new_batch
 
+def log_report_to_vessl():
+    import vessl
+    from chainer.training import extension
 
-class CustomLogReportToVessl(extension.Extension):
-    """ Custom Log Report to Vessl """
-
-    def __init__(self,  trigger=(1, 'epoch'), **kwargs):
-        self._trigger = trigger_module.get_trigger(trigger)
-
-    def __call__(self, trainer):
-        from vessl import log as vessl_log
-
+    @extension.make_extension(trigger=(1, "epoch"), priority=-100)
+    def log_report_to_vessl(trainer):
         payload = trainer.observation
         updatar = trainer.updater
         payload['epoch'] = updatar.epoch
@@ -274,14 +270,12 @@ class CustomLogReportToVessl(extension.Extension):
 
         print('payload:', payload)
 
-        vessl_log(
+        vessl.log(
             step=updatar.epoch,
             payload=payload
         )
 
-    def serialize(self, serializer):
-        if hasattr(self._trigger, 'serialize'):
-            self._trigger.serialize(serializer['_trigger'])
+    return log_report_to_vessl
 
 def train(args):
     """Train E2E-TTS model."""
@@ -572,7 +566,7 @@ def train(args):
     report_keys = ["epoch", "iteration", "elapsed_time"] + plot_keys
     trainer.extend(extensions.PrintReport(report_keys), trigger=report_interval)
     trainer.extend(extensions.ProgressBar(), trigger=report_interval)
-    trainer.extend(CustomLogReportToVessl(trigger=report_interval))
+    trainer.extend(log_report_to_vessl(), trigger=save_interval)
 
     set_early_stop(trainer, args)
     if args.tensorboard_dir is not None and args.tensorboard_dir != "":

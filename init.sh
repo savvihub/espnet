@@ -9,7 +9,7 @@ pip install -q -e .
 # download pre-compiled warp-ctc and kaldi tools
 pip install gdown
 utils/download_from_google_drive.sh \
-    "https://drive.google.com/open?id=13Y4tSygc8WtqzvAVGK_vRV9GlV7TRC0w" espnet/tools tar.gz > /dev/null
+    "https://drive.google.com/open?id=13Y4tSygc8WtqzvAVGK_vRV9GlV7TRC0w" tools tar.gz > /dev/null
 tools/installers/install_sph2pipe.sh
 
 # make dummy activate

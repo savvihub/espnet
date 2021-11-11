@@ -260,22 +260,25 @@ class CustomConverter(object):
 class CustomLogReportToVessl(LogReport):
     """ Custom Log Report to Vessl """
 
-    def __init__(self, trigger=(1, 'epoch'), **kwargs):
-        super().__init__(**kwargs)
-        self._trigger = trigger_module.get_trigger(trigger)
-
     def __call__(self, trainer):
         import vessl
 
+        payload = trainer.observation
         updatar = trainer.updater
-        payload = {'epoch': updatar.epoch, 'iteration': updatar.iteration, 'elapsed_time': trainer.elapsed_time}
-        print('payload:', payload)
-        print('observation:', trainer.observation)
+        payload['epoch'] = updatar.epoch
+        payload['iteration'] = updatar.iteration
+        payload['elapsed_time'] = trainer.elapsed_time
 
-        # vessl.log(
-        #     step=updatar.epoch,
-        #     payload=payload
-        # )
+        print('payload:', payload)
+
+        vessl.log(
+            step=updatar.epoch,
+            payload=payload
+        )
+
+    def __init__(self, trigger=(1, 'epoch'), **kwargs):
+        super().__init__(**kwargs)
+        self._trigger = trigger_module.get_trigger(trigger)
 
 def train(args):
     """Train E2E-TTS model."""
@@ -566,7 +569,7 @@ def train(args):
     report_keys = ["epoch", "iteration", "elapsed_time"] + plot_keys
     trainer.extend(extensions.PrintReport(report_keys), trigger=report_interval)
     trainer.extend(extensions.ProgressBar(), trigger=report_interval)
-    trainer.extend(CustomLogReportToVessl(trigger=report_interval))
+    trainer.extend(CustomLogReportToVessl())
 
     set_early_stop(trainer, args)
     if args.tensorboard_dir is not None and args.tensorboard_dir != "":

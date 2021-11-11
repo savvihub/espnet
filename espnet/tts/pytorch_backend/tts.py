@@ -21,6 +21,7 @@ import torch
 from chainer import training
 from chainer.training import extensions
 from chainer.training.extensions import LogReport
+from chainer.training import trigger as trigger_module
 
 from espnet.asr.asr_utils import get_model_conf
 from espnet.asr.asr_utils import snapshot_object
@@ -259,22 +260,24 @@ class CustomConverter(object):
 class CustomLogReportToVessl(LogReport):
     """ Custom Log Report to Vessl """
 
-    def __init__(self, **kwargs):
+    def __init__(self, trigger=(1, 'epoch'), **kwargs):
         super().__init__(**kwargs)
+        self._trigger = trigger_module.get_trigger(trigger)
 
     def __call__(self, trainer):
-        import vessl
-
-        updatar = trainer.updater
-        payload = {'iteration': updatar.iteration, 'elapsed_time': trainer.elapsed_time}
-
-        if self._postprocess is not None:
-            self._postprocess(payload)
-
-        vessl.log(
-            step=updatar.epoch,
-            payload=payload
-        )
+        print('log:', self._log)
+        # import vessl
+        #
+        # updatar = trainer.updater
+        # payload = {'iteration': updatar.iteration, 'elapsed_time': trainer.elapsed_time}
+        #
+        # if self._postprocess is not None:
+        #     self._postprocess(payload)
+        #
+        # vessl.log(
+        #     step=updatar.epoch,
+        #     payload=payload
+        # )
 
 def train(args):
     """Train E2E-TTS model."""

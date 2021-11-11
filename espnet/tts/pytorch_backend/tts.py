@@ -270,8 +270,9 @@ def log_report_to_vessl():
 
         print('payload:', payload)
 
+        payload = {k.replace("/", "-"): v for k, v in payload.items()}
         vessl.log(
-            step=updatar.epoch,
+            step=int(updatar.epoch),
             payload=payload
         )
 

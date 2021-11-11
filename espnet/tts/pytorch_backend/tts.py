@@ -671,6 +671,13 @@ def decode(args):
             # NOTE: exist_ok = True is needed for parallel process decoding
             os.makedirs(os.path.dirname(figname), exist_ok=True)
         plt.savefig(figname)
+
+        import vessl
+
+        vessl.log({
+            "Attention": [vessl.Image(plt, caption=figname)]
+        })
+
         plt.close()
 
     # define function to calculate focus rate

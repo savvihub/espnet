@@ -265,15 +265,13 @@ class CustomLogReportToVessl(LogReport):
         self._trigger = trigger_module.get_trigger(trigger)
 
     def __call__(self, trainer):
-        print('log:', self._log)
-        # import vessl
-        #
-        # updatar = trainer.updater
-        # payload = {'iteration': updatar.iteration, 'elapsed_time': trainer.elapsed_time}
-        #
-        # if self._postprocess is not None:
-        #     self._postprocess(payload)
-        #
+        import vessl
+
+        updatar = trainer.updater
+        payload = {'epoch': updatar.epoch, 'iteration': updatar.iteration, 'elapsed_time': trainer.elapsed_time}
+        print('payload:', payload)
+        print('observation:', trainer.observation)
+
         # vessl.log(
         #     step=updatar.epoch,
         #     payload=payload

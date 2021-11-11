@@ -20,6 +20,7 @@ import torch
 
 from chainer import training
 from chainer.training import extensions
+from chainer.training.extensions import LogReport
 
 from espnet.asr.asr_utils import get_model_conf
 from espnet.asr.asr_utils import snapshot_object
@@ -254,6 +255,26 @@ class CustomConverter(object):
 
         return new_batch
 
+
+class CustomLogReportToVessl(LogReport):
+    """ Custom Log Report to Vessl """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def __call__(self, trainer):
+        import vessl
+
+        updatar = trainer.updater
+        payload = {'iteration': updatar.iteration, 'elapsed_time': trainer.elasped_time}
+
+        if self._postprocess is not None:
+            self._postprocess(payload)
+
+        vessl.log(
+            step=updatar.epoch,
+            payload=payload
+        )
 
 def train(args):
     """Train E2E-TTS model."""
@@ -544,6 +565,7 @@ def train(args):
     report_keys = ["epoch", "iteration", "elapsed_time"] + plot_keys
     trainer.extend(extensions.PrintReport(report_keys), trigger=report_interval)
     trainer.extend(extensions.ProgressBar(), trigger=report_interval)
+    trainer.extend(CustomLogReportToVessl(trigger=report_interval))
 
     set_early_stop(trainer, args)
     if args.tensorboard_dir is not None and args.tensorboard_dir != "":

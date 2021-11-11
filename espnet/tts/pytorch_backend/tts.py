@@ -19,7 +19,7 @@ import numpy as np
 import torch
 
 from chainer import training
-from chainer.training import extensions
+from chainer.training import extensions, extension
 from chainer.training.extensions import LogReport
 from chainer.training import trigger as trigger_module
 
@@ -257,11 +257,11 @@ class CustomConverter(object):
         return new_batch
 
 
-class CustomLogReportToVessl(LogReport):
+class CustomLogReportToVessl(extension.Extension):
     """ Custom Log Report to Vessl """
 
-    def __init__(self,  **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self,  trigger=(1, 'epoch'), **kwargs):
+        self._trigger = trigger_module.get_trigger(trigger)
 
     def __call__(self, trainer):
         from vessl import log as vessl_log
@@ -278,6 +278,10 @@ class CustomLogReportToVessl(LogReport):
             step=updatar.epoch,
             payload=payload
         )
+
+    def serialize(self, serializer):
+        if hasattr(self._trigger, 'serialize'):
+            self._trigger.serialize(serializer['_trigger'])
 
 def train(args):
     """Train E2E-TTS model."""

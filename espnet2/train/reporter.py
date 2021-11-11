@@ -589,7 +589,7 @@ class Reporter:
                 payload[wandb_get_prefix(key) + key] = self.stats[epoch][key1][key2]
 
         vessl.log(
-            step=self.total_count,
+            step=epoch,
             payload=payload
         )
 

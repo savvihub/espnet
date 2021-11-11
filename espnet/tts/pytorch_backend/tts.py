@@ -266,7 +266,7 @@ class CustomLogReportToVessl(LogReport):
         import vessl
 
         updatar = trainer.updater
-        payload = {'iteration': updatar.iteration, 'elapsed_time': trainer.elasped_time}
+        payload = {'iteration': updatar.iteration, 'elapsed_time': trainer.elapsed_time}
 
         if self._postprocess is not None:
             self._postprocess(payload)

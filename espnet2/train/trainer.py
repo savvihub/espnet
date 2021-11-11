@@ -324,6 +324,7 @@ class Trainer:
                         optimizer.consolidate_state_dict()
 
             if not distributed_option.distributed or distributed_option.dist_rank == 0:
+                logging.info("Logging started")
                 # 3. Report the results
                 logging.info(reporter.log_message())
                 if plot_attention_iter_factory is not None:

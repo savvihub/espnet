@@ -587,6 +587,7 @@ class Reporter:
                     continue
                 key = f"{key1}_{key2}_epoch"
                 payload[wandb_get_prefix(key) + key] = self.stats[epoch][key1][key2]
+        logging.info(payload)
 
         vessl.log(
             step=epoch,

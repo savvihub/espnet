@@ -13,8 +13,3 @@ make kaldi
 # make dummy activate
 cd ..
 touch tools/activate_python.sh
-
-# Move dataset
-mv /input/dump /home/vessl/espnet/egs2/ljspeech/tts1/dump
-mv /input/data /home/vessl/espnet/egs2/ljspeech/tts1/data
-mv /input/downloads /home/vessl/espnet/egs2/ljspeech/tts1/downloads

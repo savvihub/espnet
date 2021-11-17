@@ -507,11 +507,6 @@ class Reporter:
             p.parent.mkdir(parents=True, exist_ok=True)
             plt.savefig(p)
 
-            import vessl
-            vessl.log(
-                {"images": [vessl.Image(data=p, caption=p)]}
-            )
-
     def _plot_stats(self, keys: Sequence[str], key2: str):
         assert check_argument_types()
         # str is also Sequence[str]

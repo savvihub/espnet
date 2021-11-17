@@ -794,4 +794,16 @@ class Trainer:
                         import wandb
 
                         wandb.log({f"attention plot/{k}_{id_}": wandb.Image(fig)})
+
+                    import vessl
+                    vessl.log(
+                        {
+                            "attention plot": [
+                                vessl.Image(
+                                    data=fig,
+                                    caption=f"{k}_{id_}",
+                                )
+                            ]
+                        }
+                    )
             reporter.next()

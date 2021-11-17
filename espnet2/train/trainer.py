@@ -781,9 +781,22 @@ class Trainer:
                         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
                     if output_dir is not None:
-                        p = output_dir / id_ / f"{k}.{reporter.get_epoch()}ep.png"
+                        filename = f"{k}.{reporter.get_epoch()}ep.png"
+                        p = output_dir / id_ / filename
                         p.parent.mkdir(parents=True, exist_ok=True)
                         fig.savefig(p)
+
+                        import vessl
+                        vessl.log(
+                            {
+                                "attention plot": [
+                                    vessl.Image(
+                                        data=p,
+                                        caption=f"{id_}/filename",
+                                    )
+                                ]
+                            }
+                        )
 
                     if summary_writer is not None:
                         summary_writer.add_figure(
@@ -794,16 +807,4 @@ class Trainer:
                         import wandb
 
                         wandb.log({f"attention plot/{k}_{id_}": wandb.Image(fig)})
-
-                    import vessl
-                    vessl.log(
-                        {
-                            "attention plot": [
-                                vessl.Image(
-                                    data=fig,
-                                    caption=f"{k}_{id_}",
-                                )
-                            ]
-                        }
-                    )
             reporter.next()

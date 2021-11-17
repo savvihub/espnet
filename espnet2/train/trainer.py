@@ -791,8 +791,8 @@ class Trainer:
                             {
                                 "attention plot": [
                                     vessl.Image(
-                                        data=p,
-                                        caption=f"{id_}/filename",
+                                        data=str(p),
+                                        caption=f"{id_}/{filename}",
                                     )
                                 ]
                             }

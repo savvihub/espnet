@@ -585,17 +585,18 @@ class Reporter:
         if epoch is None:
             epoch = self.get_epoch()
 
-        d = {}
+        payload = {}
         for key1 in self.get_keys(epoch):
             for key2 in self.stats[epoch][key1]:
                 if key2 in ("time", "total_count"):
                     continue
                 key = f"{key1}_{key2}_epoch"
-                d[wandb_get_prefix(key) + key] = self.stats[epoch][key1][key2]
-        d["epoch"] = epoch
+                payload[wandb_get_prefix(key) + key] = self.stats[epoch][key1][key2]
+        payload["epoch"] = epoch
+        payload = {k.replace("/", "-"): v for k, v in payload.items()}
         vessl.log(
             step=epoch,
-            payload=d
+            payload=payload
         )
 
     def state_dict(self):

@@ -1,6 +1,7 @@
 import argparse
 import time
-import torch
+import os
+import uuid
 
 import streamlit as st
 import soundfile as sf
@@ -18,30 +19,53 @@ def elapsed_time(fn, *args):
     return elapsed, output
 
 
-def inference(text2speech):
-    x = st.text_input(
+def inference(models):
+    input_str = st.text_input(
         label="Write your favorite sentence in English",
     )
 
-    elapsed, wav = elapsed_time(text2speech, x)
-    st.write(f'- Inference: {elapsed} seconds')
+    if input_str:
+        for model in models:
+            st.success(f'Create \"{input_str}\" with {model.name}...')
+            elapsed, input_wav = elapsed_time(model.tts, input_str)
+            st.write(f'- Inference time: {elapsed} seconds')
 
-    sf.write('test.wav', wav["wav"].view(-1).cpu().numpy(), text2speech.fs, 'PCM_24')
+            filename = str(uuid.uuid4())[:8] + ".wav"
+            filepath = os.path.join(model.path, filename)
+            if not os.path.exists(filepath):
+                st.write(f'Sentence: {input_str}')
+                sf.write(filepath, input_wav["wav"].view(-1).cpu().numpy(), model.tts.fs, 'PCM_24')
 
-    st.write("Audio:")
-    st.audio('test.wav')
+            if os.path.exists(filepath):
+                st.audio(filepath)
 
 
 def read_file(path):
     return open(path).read()
 
 
+class TTSModel:
+    def __init__(self, tts, name):
+        self.name = name
+        self.path = name + "_wav"
+        self.tts = tts
+
 def main(args):
-    text2speech = Text2Speech.from_pretrained(
-        train_config="exp/tts_train_raw_phn_tacotron_g2p_en_no_space/config.yaml",
-        model_file="exp/tts_train_raw_phn_tacotron_g2p_en_no_space/40epoch.pth",
-        vocoder_tag="parallel_wavegan/ljspeech_style_melgan.v1",
-    )
+    models = [
+        TTSModel(Text2Speech.from_pretrained(
+            train_config="exp/tts_train_raw_phn_tacotron_g2p_en_no_space/config.yaml",
+            model_file="exp/tts_train_raw_phn_tacotron_g2p_en_no_space/40epoch.pth",
+        ), "tacotron2"),
+        TTSModel(Text2Speech.from_pretrained(
+            train_config="exp/tts_train_raw_phn_tacotron_g2p_en_no_space/config.yaml",
+            model_file="exp/tts_train_raw_phn_tacotron_g2p_en_no_space/40epoch.pth",
+            vocoder_tag="parallel_wavegan/ljspeech_style_melgan.v1",
+        ), "tacotron2_vocoder"),
+    ]
+
+    for model in models:
+        if not os.path.exists(model.path):
+            os.makedirs(model.path)
 
     st.title("[Vessl AI] Tacotron2 Demo")
 
@@ -61,7 +85,7 @@ def main(args):
                  '1. Click **Source code** app mode on the side bar\n'
                  '2. The source code will show up')
     elif app_mode == "Inference":
-        inference(text2speech)
+        inference(models)
     elif app_mode == "Source code":
         st.code(read_file(args.app_path))
 

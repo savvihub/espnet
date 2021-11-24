@@ -20,6 +20,7 @@ from typing import Union
 import numpy as np
 import soundfile as sf
 import torch
+imoprt vessl
 
 from typeguard import check_argument_types
 
@@ -539,12 +540,18 @@ def inference(
 
             if output_dict.get("wav") is not None:
                 # TODO(kamo): Write scp
+                audio_path = f"{output_dir}/wav/{key}.wav"
                 sf.write(
-                    f"{output_dir}/wav/{key}.wav",
+                    audio_path,
                     output_dict["wav"].cpu().numpy(),
                     text2speech.fs,
                     "PCM_16",
                 )
+                vessl.log({
+                    "inference": [
+                        vessl.Audio(audio_path, cpation=audio_path),
+                    ]
+                })
 
     # remove files if those are not included in output dict
     if output_dict.get("feat_gen") is None:

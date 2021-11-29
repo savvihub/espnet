@@ -20,7 +20,7 @@ from typing import Union
 import numpy as np
 import soundfile as sf
 import torch
-imoprt vessl
+import vessl
 
 from typeguard import check_argument_types
 
@@ -549,7 +549,7 @@ def inference(
                 )
                 vessl.log({
                     "inference": [
-                        vessl.Audio(audio_path, cpation=audio_path),
+                        vessl.Audio(audio_path, caption=audio_path),
                     ]
                 })
 
